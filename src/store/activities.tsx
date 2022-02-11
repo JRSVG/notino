@@ -69,7 +69,6 @@ export const ActivitiesContextProvider: React.FC = ({ children }) => {
   const fetchCurrentActivityHandler = async (key: string) => {
     try {
         const fetchedActivity:Activity = await fetchActivityByKey(key);
-        console.log('fetchedActivityXX: ', fetchedActivity);
         setCurrActivity(fetchedActivity);
     } catch (err) {
       uiContext.setAction("error", "Unsuccessful action fetching");
