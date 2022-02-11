@@ -7,7 +7,7 @@ import {
   capitalize,
 } from "@mui/material";
 import _ from "lodash";
-import { useContext } from "react";
+import { Fragment, useContext } from "react";
 import { ActivitiesContext } from "../../../store/activities";
 
 export const Table: React.FC = () => {
@@ -24,10 +24,9 @@ export const Table: React.FC = () => {
         >
           <TableBody>
             {_.map(Object.entries(activityDetails), ([key, value]) => (
-              <>
+              <Fragment key={`${key}${value}`}>
                 {value !== "" && (
                   <TableRow
-                    key={`${key}${value}`}
                     sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                   >
                     <TableCell component="th" scope="row">
@@ -36,7 +35,7 @@ export const Table: React.FC = () => {
                     <TableCell align="right">{value}</TableCell>
                   </TableRow>
                 )}
-              </>
+              </Fragment>
             ))}
           </TableBody>
         </TableComponent>

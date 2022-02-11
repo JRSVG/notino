@@ -9,6 +9,7 @@ export type ActivitiesContextInterface = {
   currentActivity: Activity | null;
   addActivity: (activity: Activity) => void;
   setCurrentActivity: (activity: Activity) => void;
+  fetchCurrentActivity: (key: string) => void;
   fetchActivities: () => void;
 };
 
@@ -17,12 +18,25 @@ export const ActivitiesContext = createContext<ActivitiesContextInterface>({
   currentActivity: null,
   addActivity: (activity: Activity) => {},
   setCurrentActivity: (activity: Activity) => {},
+  fetchCurrentActivity: (key: string) => {},
   fetchActivities: () => {},
 });
 
 const fetchActivity = async () => {
   let data = [];
   const URL = "http://www.boredapi.com/api/activity/";
+  try {
+    data = await (await axios.get(URL)).data;
+    if (!data.key) throw Error;
+    return data;
+  } catch (err) {
+    throw Error;
+  }
+};
+
+const fetchActivityByKey = async (key: string) => {
+  let data = [];
+  const URL = `http://www.boredapi.com/api/activity?key=${key}`;
   try {
     data = await (await axios.get(URL)).data;
     if (!data.key) throw Error;
@@ -52,6 +66,16 @@ export const ActivitiesContextProvider: React.FC = ({ children }) => {
     }
   };
 
+  const fetchCurrentActivityHandler = async (key: string) => {
+    try {
+        const fetchedActivity:Activity = await fetchActivityByKey(key);
+        console.log('fetchedActivityXX: ', fetchedActivity);
+        setCurrActivity(fetchedActivity);
+    } catch (err) {
+      uiContext.setAction("error", "Unsuccessful action fetching");
+    }
+  };
+
   const addActivityHandler = (activity: Activity) => {
     setAllActivities((prevAllActivities) => {
       return [...prevAllActivities, activity];
@@ -67,6 +91,7 @@ export const ActivitiesContextProvider: React.FC = ({ children }) => {
     currentActivity: currActivity,
     addActivity: addActivityHandler,
     setCurrentActivity: setCurrentActivityHandler,
+    fetchCurrentActivity: fetchCurrentActivityHandler,
     fetchActivities: fetchActivitiesHandler,
   };
 
